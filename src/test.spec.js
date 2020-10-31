@@ -31,6 +31,12 @@ describe("testing grid engine", () => {
       GridEngine._canAddShapeAt(grid, newShape, new Point(0, 0))
     ).toBeFalsy();
     expect(
+      GridEngine._canAddShapeAt(grid, newShape, new Point(1, 1))
+    ).toBeTruthy();
+    expect(
+      GridEngine._canAddShapeAt(grid, newShape, new Point(0, 0))
+    ).toBeFalsy();
+    expect(
       GridEngine._canAddShapeAt(grid, newShape, new Point(3, 1))
     ).toBeFalsy();
   });
@@ -53,10 +59,18 @@ describe("testing grid engine", () => {
     expect(p2.x).toBe(0);
     expect(p2.y).toBe(1);
   });
-  it("should ...", () => {
-    // GridEngine.addShape();
+  it("should add a new shape", () => {
+    const newGrid = GridEngine.addShape(grid, newShape);
+    expect(newGrid.shapes.length).toEqual(1);
   });
-  it("should ...", () => {
-    // GridEngine.removeShape();
+  it("should remove the shape", () => {
+    grid.shapes = [
+      { ...newShape, id: 1 },
+      { ...newShape, id: 2 },
+      { ...newShape, id: 3 }
+    ];
+    const origLength = grid.shapes.length;
+    const newGrid = GridEngine.removeShape(grid, { ...newShape, id: 1 });
+    expect(newGrid.shapes.length).toEqual(origLength - 1);
   });
 });

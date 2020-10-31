@@ -1,5 +1,8 @@
 import { Point } from "./model";
 export class GridEngine {
+  constructor() {
+    this.idCounter = 1;
+  }
   static addShape(grid, shape) {
     let ret = grid;
     if (GridEngine._canAddShapeAt(grid, shape, new Point(shape.x, shape.y))) {
@@ -13,13 +16,23 @@ export class GridEngine {
       if (freeSpot) {
         ret = {
           ...grid,
-          shapes: [...grid.shapes, { ...shape, x: freeSpot.x, y: freeSpot.y }]
+          shapes: [
+            ...grid.shapes,
+            { ...shape, x: freeSpot.x, y: freeSpot.y, id: this.idCounter }
+          ]
         };
+        this.idCounter++;
       }
     }
     return ret;
   }
-  static removeShape(grid, shape) {}
+  static removeShape(grid, shape) {
+    grid.shapes.splice(
+      grid.shapes.findIndex((s) => s.id === shape.id),
+      1
+    );
+    return grid;
+  }
   static shapeCollisionInArea(grid, area) {
     let collision = false;
     for (let point of area.points) {
@@ -31,7 +44,7 @@ export class GridEngine {
     return collision;
   }
   static _checkBorderCollision(grid, point) {
-    return !(point.x <= grid.width - 1 && point.y <= grid.height - 1);
+    return !(point.x < grid.width && point.y < grid.height);
   }
   static shapeAt(grid, point) {
     return grid.shapes.find(
@@ -61,26 +74,51 @@ export class GridEngine {
     }
   }
   static _canAddShapeAt(grid, shape, point) {
-    let collision = false;
-    for (let width = 0; width < shape.width; width++) {
-      if (collision) {
-        break;
+    const borderCollision = GridEngine._checkBorderCollision(
+      grid,
+      new Point(point.x + shape.width - 1, point.y + shape.height - 1)
+    );
+    const collision = grid.shapes.find((s) => {
+      const diffX = s.x - point.x;
+      let collideX = false;
+      if (diffX >= 0) {
+        collideX = s.x + s.width - 1 >= point.x;
+      } else {
+        collideX = point.x + shape.width - 1 >= s.x;
       }
-      for (let height = 0; height < shape.height; height++) {
-        const targetCoordinates = new Point(point.x + width, point.y + height);
-        const foundShape = GridEngine.shapeAt(grid, targetCoordinates);
-        const borderCollision = GridEngine._checkBorderCollision(
-          grid,
-          targetCoordinates
-        );
-        collision = !!foundShape || borderCollision;
+      const diffY = s.y - point.y;
+      let collideY = false;
+      if (diffY <= 0) {
+        collideY = s.y + s.height - 1 >= point.y;
+      } else {
+        collideY = point.y + shape.height - 1 >= s.y;
+      }
+      return collideX && collideY;
+    });
 
-        if (collision) {
-          break;
-        }
-      }
-    }
-    return !collision;
+    return collision === undefined && !borderCollision;
+
+    //   let collision = false;
+    //   for (let width = 0; width < shape.width; width++) {
+    //     if (collision) {
+    //       break;
+    //     }
+    //     for (let height = 0; height < shape.height; height++) {
+    //       const targetCoordinates = new Point(point.x + width, point.y + height);
+    //       const foundShape = GridEngine.shapeAt(grid, targetCoordinates);
+    //       const borderCollision = GridEngine._checkBorderCollision(
+    //         grid,
+    //         targetCoordinates
+    //       );
+    //       collision = !!foundShape || borderCollision;
+
+    //       if (collision) {
+    //         break;
+    //       }
+    //     }
+    //   }
+    //   return !collision;
+    // }
   }
 }
 
