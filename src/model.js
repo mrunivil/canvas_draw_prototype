@@ -5,17 +5,32 @@ export class Grid {
     this.height = height || 10;
     this.gridSize = config.gridSize;
     this.shapes = [];
-    for (let x = 0; x < this.width; x++) {
-      for (let y = 0; y < this.height; y++) {
-        this.shapes.push(new Shape(1, 1, x, y));
+  }
+}
+export class Area {
+  constructor(x, y, width, height) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 1;
+    this.height = height || 1;
+    this.points = [];
+    for (let ax = 0; ax < this.width; ax++) {
+      for (let ay = 0; ay < this.height; ay++) {
+        this.points.push(new Point(ax + x, ay + y));
       }
     }
   }
 }
-export class Shape {
-  constructor(width, height, x, y) {
+export class Point {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
+  }
+}
+export class Shape {
+  constructor(width, height, x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
     this.width = width;
     this.height = height;
     this.layers = [];

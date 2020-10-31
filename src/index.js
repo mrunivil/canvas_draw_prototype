@@ -5,7 +5,6 @@ import { config } from "./config";
 
 class Engine {
   constructor(canvasElement) {
-    this.play = true;
     this.canvasElement = canvasElement;
     this.ctx = this.canvasElement.getContext("2d");
   }
@@ -27,21 +26,19 @@ class Engine {
   }
   loop() {
     // console.log(this.play);
-    if (this.play) {
-      if (Date.now() - this.lastTickUpdate > 1000 / config.ticksPerSecond) {
-        if (this.mousemove) {
-          this.mouseCoord = this.translateCoordinates(
-            this.mousemove.offsetX,
-            this.mousemove.offsetY
-          );
-          this.grid.shapes.forEach(
-            (s) =>
-              (s.isHighlighted =
-                s.x === this.mouseCoord.x && s.y === this.mouseCoord.y)
-          );
-        }
-        this.lastTickUpdate = Date.now();
+    if (Date.now() - this.lastTickUpdate > 1000 / config.ticksPerSecond) {
+      if (this.mousemove) {
+        this.mouseCoord = this.translateCoordinates(
+          this.mousemove.offsetX,
+          this.mousemove.offsetY
+        );
+        this.grid.shapes.forEach(
+          (s) =>
+            (s.isHighlighted =
+              s.x === this.mouseCoord.x && s.y === this.mouseCoord.y)
+        );
       }
+      this.lastTickUpdate = Date.now();
     }
     this.draw();
   }
@@ -157,11 +154,7 @@ class Engine {
   drawInteractions() {}
 }
 const engine = new Engine(document.getElementById("game"));
-const playBtn = document.querySelector("#play");
 engine.init();
-playBtn.addEventListener("click", function () {
-  engine.play = !engine.play;
-});
 
 function loop() {
   requestAnimationFrame(() => {
