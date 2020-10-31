@@ -19,7 +19,7 @@ describe("testing grid engine", () => {
     ).toBeFalsy();
     grid.shapes = [newShape];
     expect(
-      GridEngine.shapeCollisionInArea(grid, new Area(0, 0, 1, 3))
+      GridEngine.shapeCollisionInArea(grid, new Area(0, 0, 3, 1))
     ).toBeTruthy();
   });
   it("shoud check if a new shape can be added at specific point", () => {
@@ -43,5 +43,20 @@ describe("testing grid engine", () => {
     expect(
       GridEngine._checkBorderCollision(grid, new Point(3, 5))
     ).toBeTruthy();
+  });
+  it("should find the next available space in the grid", () => {
+    grid.shapes = [newShape];
+    const p1 = GridEngine.findNextFreeSlot(grid, newShape, new Point(2, 0));
+    expect(p1.x).toBe(0);
+    expect(p1.y).toBe(1);
+    const p2 = GridEngine.findNextFreeSlot(grid, newShape, new Point(0, 4));
+    expect(p2.x).toBe(0);
+    expect(p2.y).toBe(1);
+  });
+  it("should ...", () => {
+    // GridEngine.addShape();
+  });
+  it("should ...", () => {
+    // GridEngine.removeShape();
   });
 });

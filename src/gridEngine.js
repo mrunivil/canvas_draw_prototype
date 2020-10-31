@@ -1,4 +1,4 @@
-import { Grid, Point, Shape, Area } from "./model";
+import { Point } from "./model";
 export class GridEngine {
   static addShape(grid, shape) {
     let ret = grid;
@@ -35,22 +35,26 @@ export class GridEngine {
   }
   static shapeAt(grid, point) {
     return grid.shapes.find(
-      (s) => s.x + s.width - point.x >= 0 && s.y + s.height - point.y >= 0
+      (s) =>
+        point.x >= s.x &&
+        point.x < s.x + s.width - 1 &&
+        point.y >= s.y &&
+        point.y <= s.y + s.height - 1
     );
   }
   static findNextFreeSlot(grid, shape, point) {
     let foundFreeSlot = false;
-    for (let y = 0; y < grid.height; y++) {
+    for (let y = 0; y < grid.height - 1; y++) {
       if (foundFreeSlot) {
         break;
       }
-      for (let x = 0; x < grid.width; x++) {
+      for (let x = 0; x < grid.width - 1; x++) {
         if (foundFreeSlot) {
           break;
         }
-        const area = new Area(x, y, shape.width, shape.height);
-        const collision = GridEngine.shapeCollisionInArea(grid, area);
-        if (!collision) {
+        // const area = new Area(x, y, shape.width, shape.height);
+        // const collision = GridEngine.shapeCollisionInArea(grid, area);
+        if (GridEngine._canAddShapeAt(grid, shape, new Point(x, y))) {
           return new Point(x, y);
         }
       }
@@ -72,10 +76,6 @@ export class GridEngine {
         collision = !!foundShape || borderCollision;
 
         if (collision) {
-          console.log(
-            "collision at " +
-              JSON.stringify(new Point(point.x + width, point.y + height))
-          );
           break;
         }
       }
